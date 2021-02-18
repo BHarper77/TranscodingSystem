@@ -1,0 +1,14 @@
+{
+  "name": "transcoding-website",
+  "version": "1.0.0",
+  "description": "Website for transcoding service",
+  "main": "fileHandling.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bundle.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
