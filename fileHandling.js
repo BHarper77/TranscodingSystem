@@ -15,7 +15,6 @@ const { json } = require("body-parser");
 
 const filePath = "files";
 
-var uniqueName;
 //Send message to RabbitMQ
 function send(file, name)
 {
@@ -48,12 +47,6 @@ function send(file, name)
 
             channel.sendToQueue(queue, Buffer.from(msgJson));
         });
-
-        /*setTimeout(function() 
-        {
-            connection.close();
-            process.exit();
-        }, 500);*/
     });
 }
 
@@ -88,15 +81,6 @@ async function testFirestore(db, file, name)
 const app = express();
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-
-//Generate random number for filename
-var randNum = function()
-{
-    const min = 100000;
-    const max = 999999;
-
-    return Math.floor(Math.random() * (max - min + 1) + min);
-};
 
 //Tell Multer where to store file and what to call file
 const storage = multer.diskStorage({
