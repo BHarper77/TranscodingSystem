@@ -1,0 +1,23 @@
+#TODO: Configure and link with pvc and maybe pod in deployment file
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ffmpeg-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-storage
+  local:
+    path: /host
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - example-node
