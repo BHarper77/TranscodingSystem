@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ffmpeg-deployment
@@ -9,19 +9,19 @@ spec:
   selector: 
     matchLabels:
       app: ffmpeg
-    template: #Pod blueprint
-      metadata:
-        labels:
-          app: ffmpeg
-      spec:
-        containers:
+  template:
+    metadata:
+      labels:
+        app: ffmpeg
+    spec:
+      containers:
         - name: ffmpeg
-          image: bharper7/ffmpeg 
+          image: bharper7/ffmpeg
           volumeMounts: 
-          - mountPath: "/host"
+          - mountPath: user/home/video
             name: files-mount
-        volumes:
-          - name: files-mount
-            #TODO: configure and link pvc and pv
-            persistentVolumeClaim: ffmpeg-pvc
+      volumes:
+      - name: files-mount
+        persistentVolumeClaim:
+          claimName: ffmpeg-pvc
     
