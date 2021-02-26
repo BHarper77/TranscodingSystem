@@ -18,7 +18,7 @@ spec:
         - name: ffmpeg
           image: bharper7/ffmpeg
           volumeMounts: 
-          - mountPath: user/home/video
+          - mountPath: "user/home/videos"
             name: files-mount
       volumes:
       - name: files-mount
