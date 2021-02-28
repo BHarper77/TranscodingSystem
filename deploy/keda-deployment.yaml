@@ -1,0 +1,13 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: keda-deployment
+spec:
+  scaleTargetRef:
+    name: ffmpeg
+  triggers:
+  - type: rabbitmq
+    metadata:
+      host: amqp://localhost:5672
+      queueLength: "20"
+      queueName: files

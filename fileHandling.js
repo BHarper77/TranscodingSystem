@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 
 const firebaseAdmin = require("firebase-admin");
-const serviceAccount = require("./honours-project-88f0c-firebase-adminsdk-pjyfq-4efabae31f.json");
+const serviceAccount = require("./honours-project-88f0c-firebase-adminsdk-pjyfq-be29971c7a.json");
 
 const amqp = require("amqplib/callback_api");
 const { json } = require("body-parser");
@@ -111,4 +111,11 @@ app.post("/save-file", upload.single("file"), (req, res) => {
     res.end();
 })
 
-app.listen(3000, () => console.log("server is running on port 3000"));
+app.get("/test", (req, res) => {
+    res.send("Hello World");
+    res.end();
+})
+
+const port = 3000;
+
+app.listen(port, () => console.log(`server is running on port ${port}`));
