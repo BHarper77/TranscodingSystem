@@ -1,3 +1,5 @@
+//TODO: Update Java code to transcode video when a RabbitMQ message is recieved
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

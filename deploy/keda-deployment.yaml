@@ -1,14 +1,13 @@
-apiVersion: keda.sh/v1alpha1
-kind: TriggerAuthentication
-metadata:
-  name: rabbitmq-trigger
-  namespace: default
-spec:
-  secretTargetRef:
-    - parameter: host
-      name: rabbitmq-secret
-      key: host
----
+#apiVersion: keda.sh/v1alpha1
+#kind: TriggerAuthentication
+#metadata:
+#  name: rabbitmq-trigger
+#spec:
+#  secretTargetRef:
+#    - parameter: host
+#      name: rabbitmq-secret
+#      key: host
+#---
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
@@ -16,11 +15,13 @@ metadata:
 spec:
   scaleTargetRef:
     name: ffmpeg
+  minReplicaCount: 0
+  maxReplicaCount: 10
   triggers:
   - type: rabbitmq
     metadata:
       host: amqp://localhost:5672
       queueLength: "1"
       queueName: files
-    authenticationRef:
-      name: rabbitmq-trigger
+#    authenticationRef:
+#      name: rabbitmq-trigger
