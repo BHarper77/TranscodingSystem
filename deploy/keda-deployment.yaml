@@ -1,4 +1,15 @@
 apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: rabbitmq-trigger
+  namespace: default
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: rabbitmq-secret
+      key: host
+---
+apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: keda-deployment
@@ -9,5 +20,7 @@ spec:
   - type: rabbitmq
     metadata:
       host: amqp://localhost:5672
-      queueLength: "20"
+      queueLength: "1"
       queueName: files
+    authenticationRef:
+      name: rabbitmq-trigger
