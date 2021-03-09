@@ -18,7 +18,7 @@ const filePath = "files";
 //Send message to RabbitMQ
 function send(file, name)
 {
-    const localHost = "amqp://localhost:5672";
+    const localHost = "amqp://192.168.49.2:30861";
 
     amqp.connect(localHost, function(error0, connection) 
     {
