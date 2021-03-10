@@ -1,0 +1,35 @@
+<html>
+    <head>
+
+    </head>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io();
+    </script>
+
+    <body>
+        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+            <input type="file" id="inpFile" name="file" accept="video/*, .mkv"><br>
+            <button type="submit">Upload File</button>
+        </form>
+
+        <table>
+            <tr>
+                <td>Title: </td>
+                <td id="title"></td>
+            </tr>
+            <tr>
+                <td>Size: </td>
+                <td id="size"></td>
+            </tr>
+            <tr>
+                <td>Type: </td>
+                <td id="type"></td>
+            </tr>
+        </table>
+    </body>
+
+    <script type="module" src="upload.js"></script>
+</html>
