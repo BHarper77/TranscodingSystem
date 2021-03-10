@@ -85,7 +85,7 @@ app.use(express.urlencoded({ extended: true }));
 const storage = multer.diskStorage({
     destination: function (req, file, cb)
     {
-        cb(null, filePath)
+        cb(null, "../" + filePath)
     },
     filename: function (req, file, cb)
     {

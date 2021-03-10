@@ -26,7 +26,7 @@ uploadForm.addEventListener("submit", e => {
     var x = randNum();
     var name = `${x} - ${Date.now()}`;
 
-    const endpoint = "http://192.168.254.138:3000/save-file";
+    const endpoint = "http://localhost:3000/save-file";
 
     const formData = new FormData();
 
