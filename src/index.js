@@ -1,19 +1,17 @@
-/*
-    Server side script to handle recieving file from front end and saving it to dir
-    Works with NodeJS, Express and Multer
-*/
-
 const express = require("express");
+const app = express();
+
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+
 const bodyParser = require("body-parser");
 const multer = require("multer");
 
 const firebaseAdmin = require("firebase-admin");
-const serviceAccount = require("./honours-project-88f0c-firebase-adminsdk-pjyfq-be29971c7a.json");
+const serviceAccount = require("../honours-project-88f0c-firebase-adminsdk-pjyfq-be29971c7a.json");
 
 const amqp = require("amqplib/callback_api");
 const { json } = require("body-parser");
-
-const filePath = "files";
 
 //Send message to RabbitMQ
 function send(file, name)
@@ -57,6 +55,7 @@ firebaseAdmin.initializeApp({
 });
 
 const db = firebaseAdmin.firestore();
+const filePath = "files";
 
 //Insert data into Firestore
 async function testFirestore(db, file, name)
@@ -79,7 +78,6 @@ async function testFirestore(db, file, name)
     });
 }
 
-const app = express();
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -102,25 +100,25 @@ const storage = multer.diskStorage({
     }
 });
 
-//Passing storage object to multer constructor to create upload object
 const upload = multer({storage});
 upload.any();
 
-//Creating endpoint
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
+
+app.get("/upload.js", (req, res) => {
+    res.sendFile(__dirname + "/upload.js");
+});
+
 app.post("/save-file", upload.single("file"), (req, res) => {
     //Creates endpoint 'save-file' for POST requests to be sent to
     res.end();
-})
+});
 
-app.get("/test", (req, res) => {
-    res.send("Hello World");
-    res.end();
-})
-
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
-})
+io.on("connection", (socket) => {
+    console.log("a user connected");
+});
 
 const port = 3000;
-
-app.listen(port, () => console.log(`server is running on port ${port}`));
+app.listen(port, () => console.log(`Server is running on port ${port}`));
