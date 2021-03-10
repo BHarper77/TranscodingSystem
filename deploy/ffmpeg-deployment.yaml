@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ffmpeg
+  labels:
+    app: ffmpeg
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: ffmpeg
+  template:
+    metadata:
+      labels:
+        app: ffmpeg
+    spec:
+      containers:
+        - name: ffmpeg
+          image: bharper7/ffmpeg
+          volumeMounts: 
+          - mountPath: "user/home/videos"
+            name: files-mount
+      volumes:
+      - name: files-mount
+        persistentVolumeClaim:
+          claimName: ffmpeg-pvc
+    

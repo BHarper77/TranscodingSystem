@@ -1,0 +1,55 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq-cluster
+spec:
+  persistence:
+    storageClassName: standard
+    storage: 5Gi
+  service:
+    type: NodePort
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: rabbitmq
+                image: rabbitmq:3.8-management
+                ports:
+                - containerPort: 5672
+                  name: amqp
+                env:
+                - name: RABBITMQ_ERLANG_COOKIE
+                  valueFrom:
+                    secretKeyRef:
+                      name: rabbitmq-secret
+                      key: RABBITMQ_ERLANG_COOKIE
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rabbimq-pvc
+spec:
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rabbitmq-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: standard
+  hostPath:
+    path: /mnt/app/rabbitmq
+    type: DirectoryOrCreate
