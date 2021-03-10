@@ -2,8 +2,7 @@ const uploadForm = document.getElementById("uploadForm");
 const inpFile = document.getElementById("inpFile");
 
 //Update page when user selects file
-inpFile.onchange = () =>
-{
+inpFile.onchange = () => {
     var files = inpFile.files;
     var file = files.item(0);
 
@@ -12,8 +11,7 @@ inpFile.onchange = () =>
     document.getElementById("type").innerHTML = file.type;
 };
 
-uploadForm.addEventListener("submit", e => 
-{
+uploadForm.addEventListener("submit", e => {
     e.preventDefault();
 
     //Generate unique filename

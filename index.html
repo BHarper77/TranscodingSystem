@@ -1,12 +1,13 @@
-<!--
-    Front end view 
-    Also contains script to upload file using Fetch API
--->
-
 <html>
     <head>
 
     </head>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io();
+    </script>
 
     <body>
         <form id="uploadForm" method="POST" enctype="multipart/form-data">
@@ -30,5 +31,5 @@
         </table>
     </body>
 
-    <script src="upload.js"></script>
+    <script type="module" src="upload.js"></script>
 </html>
