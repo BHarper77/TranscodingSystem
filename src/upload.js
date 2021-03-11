@@ -1,3 +1,14 @@
+const url = "http://localhost:3000";
+
+const socket = io(url, {
+    autoConnect: false,
+    usernameAlreadySelected: false
+});
+
+socket.onAny((event, args) => {
+    console.log(event, args);
+});
+
 const uploadForm = document.getElementById("uploadForm");
 const inpFile = document.getElementById("inpFile");
 
@@ -33,6 +44,8 @@ uploadForm.addEventListener("submit", e => {
     formData.append("name", name);
     formData.append("file", inpFile.files[0]);
 
+    socketInit(name);
+
     for (var value of formData.values())
     {
         console.log(value);
@@ -43,4 +56,35 @@ uploadForm.addEventListener("submit", e => {
         method: "POST",
         body: formData
     }).catch(console.error)
+
+    const userChoice = {
+        test: "mp4"
+    }
+
+    socketMessage(userChoice);
+});
+
+function socketInit(username) 
+{
+    socket.usernameAlreadySelected = true;
+    socket.auth = { username };
+    socket.connect();
+}
+
+function socketMessage()
+{
+    if (socket.selectedUser) 
+    {
+        socket.emit("userChoice", {
+            userChoice,
+            to: socket.selectedUser.userID
+        })
+    }
+}
+
+socket.on("connect_error", (err) => {
+    if(err.message === "invalid username")
+    {
+        this.usernameAlreadySelected = false;
+    }
 });

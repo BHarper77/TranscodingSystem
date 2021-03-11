@@ -5,11 +5,7 @@
 
     <!--TODO: Fix this:
                 Browser can't find file, both files suggested by SocketIO docs don't work-->
-    <script src="/node_modules/socket.io/client-dist/socket.io.js"></script>
-
-    <script>
-        var socket = io();
-    </script>
+    <script src="/socket.io/socket.io.js"></script>
 
     <body>
         <form id="uploadForm" method="POST" enctype="multipart/form-data">
@@ -33,5 +29,5 @@
         </table>
     </body>
 
-    <script type="module" src="upload.js"></script>
+    <script src="upload.js"></script>
 </html>

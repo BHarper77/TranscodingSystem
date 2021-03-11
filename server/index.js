@@ -1,8 +1,12 @@
 const express = require("express");
 const app = express();
 
-const http = require("http").Server(app);
-const io = require("socket.io")(http);
+const httpServer = require("http").createServer();
+const io = require("socket.io")(httpServer, {
+    cors: {
+        origin: "http://localhost:8080"
+    }
+});
 
 const bodyParser = require("body-parser");
 const multer = require("multer");
@@ -103,21 +107,39 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 upload.any();
 
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/index.html");
-});
-
-app.get("/upload.js", (req, res) => {
-    res.sendFile(__dirname + "/upload.js");
-});
-
 app.post("/save-file", upload.single("file"), (req, res) => {
     //Creates endpoint 'save-file' for POST requests to be sent to
     res.end();
 });
 
+//Testing
+app.post("/test", (req, res) => {
+    //console.log(req.body);
+    res.end();
+});
+
+io.use((socket, next) => {
+    const username = socket.handshake.auth.username;
+
+    if (!username)
+    {
+        return next(new Error("invalid username"));
+    }
+
+    socket.username = username;
+    next();
+});
+
 io.on("connection", (socket) => {
-    console.log("a user connected");
+    console.log("A user connected: " + socket.username);
+
+    socket.on("userChoice", ({ content, to }) => {
+        console.log(content);
+    });
+
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
+    });
 });
 
 const port = 3000;
