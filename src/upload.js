@@ -71,15 +71,17 @@ function socketInit(username)
     socket.connect();
 }
 
-function socketMessage()
+function socketMessage(userChoice)
 {
-    if (socket.selectedUser) 
+    /*if (socket.selectedUser) 
     {
         socket.emit("userChoice", {
             userChoice,
             to: socket.selectedUser.userID
-        })
-    }
+        });
+    }*/
+
+    socket.emit("userChoice", userChoice);
 }
 
 socket.on("connect_error", (err) => {

@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const httpServer = require("http").createServer();
+const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
     cors: {
         origin: "http://localhost:8080"
@@ -133,7 +133,7 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
     console.log("A user connected: " + socket.username);
 
-    socket.on("userChoice", ({ content, to }) => {
+    socket.on("userChoice", (content) => {
         console.log(content);
     });
 
@@ -143,4 +143,4 @@ io.on("connection", (socket) => {
 });
 
 const port = 3000;
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+httpServer.listen(port, () => console.log(`Server is running on port ${port}`));
