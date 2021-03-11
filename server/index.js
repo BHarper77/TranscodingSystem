@@ -3,9 +3,7 @@ const app = express();
 
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
-    cors: {
-        origin: "http://localhost:8080"
-    }
+    cors: { origin: "http://localhost:8080" }
 });
 
 const bodyParser = require("body-parser");
@@ -114,10 +112,10 @@ app.post("/save-file", upload.single("file"), (req, res) => {
 
 //Testing
 app.post("/test", (req, res) => {
-    //console.log(req.body);
     res.end();
 });
 
+//Initialise socket
 io.use((socket, next) => {
     const username = socket.handshake.auth.username;
 
@@ -141,6 +139,8 @@ io.on("connection", (socket) => {
         console.log("user disconnected");
     });
 });
+
+//TODO: Send socket message to user when video is finished transcoding
 
 const port = 3000;
 httpServer.listen(port, () => console.log(`Server is running on port ${port}`));
