@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 
+const corsLocal = "http://loclhost:8080";
+const cors = "http://192.168.43.125:8080";
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
-    cors: { origin: "http://localhost:8080" }
+    cors: { origin: cors }
 });
 
 const bodyParser = require("body-parser");

@@ -1,6 +1,7 @@
 const url = "http://localhost:3000";
+const serverUrl = "http://192.168.254.138:3000";
 
-const socket = io(url, {
+const socket = io(serverUrl, {
     autoConnect: false,
     usernameAlreadySelected: false
 });
