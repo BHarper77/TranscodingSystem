@@ -38,6 +38,7 @@ uploadForm.addEventListener("submit", e => {
     var name = `${x} - ${Date.now()}`;
 
     const endpoint = "http://localhost:3000/save-file";
+    const server = "http://192.168.254.138:3000/save-file";
 
     const formData = new FormData();
 
@@ -52,7 +53,7 @@ uploadForm.addEventListener("submit", e => {
         console.log(value);
     }
 
-    fetch(endpoint, {
+    fetch(server, {
         mode: "no-cors",
         method: "POST",
         body: formData
