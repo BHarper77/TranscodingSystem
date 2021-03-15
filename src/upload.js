@@ -44,6 +44,7 @@ uploadForm.addEventListener("submit", e => {
     formData.append("name", name);
     formData.append("file", inpFile.files[0]);
 
+    //Open socket channel to server on form submission
     socketInit(name);
 
     for (var value of formData.values())
@@ -61,6 +62,7 @@ uploadForm.addEventListener("submit", e => {
         test: "mp4"
     }
 
+    //Send user choice through socket channel
     socketMessage(userChoice);
 });
 
@@ -68,21 +70,22 @@ function socketInit(username)
 {
     socket.usernameAlreadySelected = true;
     socket.auth = { username };
+    console.log(username);
     socket.connect();
 }
 
+socket.on("connect", () => {
+    console.log(socket.id);
+});
+
 function socketMessage(userChoice)
 {
-    /*if (socket.selectedUser) 
-    {
-        socket.emit("userChoice", {
-            userChoice,
-            to: socket.selectedUser.userID
-        });
-    }*/
-
     socket.emit("userChoice", userChoice);
 }
+
+socket.on("fileReady", (content) => {
+    console.log("From server: " + content);
+});
 
 socket.on("connect_error", (err) => {
     if(err.message === "invalid username")
