@@ -15,6 +15,8 @@ const serviceAccount = require("../honours-project-88f0c-firebase-adminsdk-pjyfq
 const amqp = require("amqplib/callback_api");
 const { json } = require("body-parser");
 
+const chokidar = require("chokidar");
+
 //Send message to RabbitMQ
 function send(file, name)
 {
@@ -115,7 +117,7 @@ app.post("/test", (req, res) => {
     res.end();
 });
 
-//Initialise socket
+//Initialise socket with username from client side
 io.use((socket, next) => {
     const username = socket.handshake.auth.username;
 
@@ -130,17 +132,38 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
     console.log("A user connected: " + socket.username);
+    console.log("SocketID: " + socket.id);
 
     socket.on("userChoice", (content) => {
-        console.log(content);
+        console.log("userChoice: " + content.test);
     });
 
     socket.on("disconnect", () => {
-        console.log("user disconnected");
+        console.log("User disconnected");
     });
+
+    //fileWatching(socket);
 });
 
 //TODO: Send socket message to user when video is finished transcoding
+//Send message to specific user when video is transcoded. Current implementation is broadcasting every video to user
+//Need to think of way of tying socket.id and username/filename together for each user. Store in DB maybe?
+async function fileWatching(socket)
+{
+    var fileLocation = ("../files");
+
+    var watcher = chokidar.watch(".", {
+        persistent: false,
+        cwd: fileLocation
+    });
+
+    watcher.on("add", path => {
+        const split = path.split(".");
+
+        //socket.emit("fileReady", split[0]);
+        socket.to(socket.id).emit("fileReady", split[0]);
+    });
+}
 
 const port = 3000;
 httpServer.listen(port, () => console.log(`Server is running on port ${port}`));
