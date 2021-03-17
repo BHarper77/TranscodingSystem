@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: receive
+spec:
+  selector:
+    matchLabels:
+      app: receive
+  template:
+    metadata:
+      labels:
+        app: receive
+    spec:
+      containers:
+      - name: receive
+        image: receive
+        ports:
+        - containerPort: 5672
+        env:
+        - name: RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: RABBITMQ_ERLANG_COOKIE

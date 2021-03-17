@@ -17,8 +17,6 @@ RUN mkdir videos
 
 COPY . .
 
-RUN rabbitmq-server
-
 CMD ["python3", "ffmpeg.py"]
 
 EXPOSE 5672
