@@ -1,22 +1,17 @@
-FROM rabbitmq
-
-#install Python
-RUN apt-get update &&\
-    apt-get install -y \
-    python3-pip
-
-#Install Pika
-RUN python3 -m pip install pika
+FROM node
 
 #Create new user
 RUN useradd -ms /bin/bash user
 USER user
 WORKDIR /home/user
 
+#Install packages
+RUN npm install amqplib
+
 RUN mkdir videos
 
 COPY . .
 
-CMD ["python3", "ffmpeg.py"]
+CMD ["node", "receive.js"]
 
 EXPOSE 5672

@@ -16,6 +16,7 @@ spec:
         image: receive
         ports:
         - containerPort: 5672
+        imagePullPolicy: Never
         env:
         - name: RABBITMQ_ERLANG_COOKIE
           valueFrom:

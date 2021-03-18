@@ -1,8 +1,8 @@
 const amqp = require("amqplib/callback_api");
 
-const localHost = "amqp://localhost:5672"
+const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861"
 
-amqp.connect(localHost, function(error0, connection) 
+amqp.connect(cluster, function(error0, connection) 
 {
     if (error0)
     {
