@@ -16,12 +16,19 @@ spec:
     spec:
       containers:
         - name: ffmpeg
-          image: bharper7/ffmpeg
+          image: bharper7/ffmpeg:v2
           volumeMounts: 
-          - mountPath: "user/home/videos"
+          - mountPath: "/home/user/videos"
             name: files-mount
+          ports:
+            - containerPort: 5672
+          env:
+          - name: RABBITMQ_ERLANG_COOKIE
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: RABBITMQ_ERLANG_COOKIE
       volumes:
       - name: files-mount
         persistentVolumeClaim:
-          claimName: ffmpeg-pvc
-    
+          claimName: ffmpeg-pvc  

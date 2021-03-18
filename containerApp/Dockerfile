@@ -1,6 +1,4 @@
-FROM openjdk:11
-
-WORKDIR /app
+FROM node
 
 #Install FFmpeg
 RUN apt-get update &&\
@@ -11,10 +9,14 @@ RUN useradd -ms /bin/bash user
 USER user
 WORKDIR /home/user
 
+#Install npm packages
+RUN npm install amqplib fluent-ffmpeg
+
 RUN mkdir videos
+RUN chmod -R 777 videos
 
 COPY . .
 
-RUN javac ffmpegCommand.java
+CMD ["node", "ffmpeg.js"]
 
-CMD ["java", "ffmpegCommand"]
+EXPOSE 5672

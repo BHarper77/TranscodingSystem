@@ -23,21 +23,15 @@ const chokidar = require("chokidar");
 function send(file, name)
 {
     const localHost = "amqp://127.0.0.1:5672";
-    const cluster = "amqp://192.168.49.2:30861";
+    const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861";
 
-    amqp.connect(localHost, function(error0, connection) 
+    amqp.connect(cluster, function(error0, connection) 
     {
-        if (error0)
-        {
-            throw error0;
-        }
+        if (error0) throw error0;
 
         connection.createChannel(function(error1, channel) 
         {
-            if (error1)
-            {
-                throw error1;
-            }
+            if (error1) throw error1;
 
             const queue = "files";
             var msg = {
@@ -51,6 +45,7 @@ function send(file, name)
             });
 
             channel.sendToQueue(queue, Buffer.from(msgJson));
+            console.log("Message sent:" + msg.name);
         });
     });
 }
@@ -111,6 +106,7 @@ upload.any();
 
 app.post("/save-file", upload.single("file"), (req, res) => {
     //Creates endpoint 'save-file' for POST requests to be sent to
+    console.log("File received: " + req.body.name);
     res.end();
 });
 
