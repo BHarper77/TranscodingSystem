@@ -7,7 +7,7 @@ amqp.connect(cluster, function(error0, connection)
 {
     if (error0) throw error0;
 
-    connection.createChannel(function(error1, channel) 
+    connection.createChannel(function(error1, channel)
     {
         if (error1) throw error1;
 
@@ -19,23 +19,13 @@ amqp.connect(cluster, function(error0, connection)
 
         console.log(`Waiting for messages in ${queue}`);
 
-        //TODO: Channel.get method isn't working, only consume method
         //Receive one message from queue and exit
-        /*channel.get(queue, msg => {
-            if (msg)
-            {
-                var object = JSON.parse(msg.content.toString());
-                console.log("Message received: " + object.name);
-                transcode(object.name);
-
-                channel.close();
-            }
-
-            
-        });*/
-
         channel.consume(queue, function(msg) {
-            console.log(" [x] Received %s", msg.content.toString());
+            console.log("Message received: " + msg.content.toString());
+
+            transcode(msg.content.toString());
+
+            //TODO: Implement way of exiting the script when video is finished transcoding
         }, {
             noAck: true
         });
@@ -45,18 +35,22 @@ amqp.connect(cluster, function(error0, connection)
 //Get filename from message queue and transcode
 function transcode(name)
 {
-    const dir = "files";
-    const file = dir + "/name";
+    const dir = "videos/";
+    const file = dir + name;
+    const split = name.split(".");
 
     ffmpeg(file)
-        .on("error", function(err) {
-            console.log(`${file} could not be transcoded. Error: ${err}`);
+        //.format("mp4")
+        .outputOptions("-codec copy")
+        .on("start", function(commandLine) {
+            console.log("Transcoding started with command: " + commandLine);
         })
-        .on("progress", function(progress) {
-            console.log(`Current progress: ${progress.percent} done`);
+        .on("error", function(err, stdout, stderr) {
+            console.log(`${file} could not be transcoded`);
+            console.log(`${err} \n ${stdout} \n ${stderr}`);
         })
         .on("end", function() {
             console.log(`${file} has finished transcoding`);
         })
-        .save(dir + `/${name}.mp4`);
+        .save(dir + `${split[0]}.mp4`);
 }
