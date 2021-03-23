@@ -10,6 +10,6 @@ spec:
   triggers:
   - type: rabbitmq
     metadata:
-      host: amqp://localhost:5672
+      host: amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861
       queueLength: "1"
       queueName: files

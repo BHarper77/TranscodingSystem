@@ -22,10 +22,12 @@ amqp.connect(cluster, function(error0, connection)
         //Receive one message from queue and exit
         channel.consume(queue, function(msg) {
             console.log("Message received: " + msg.content.toString());
+            channel.close();
+            connection.close();
 
             transcode(msg.content.toString());
 
-            //TODO: Implement way of exiting the script when video is finished transcoding
+            //process.exit(0);
         }, {
             noAck: true
         });
@@ -33,7 +35,7 @@ amqp.connect(cluster, function(error0, connection)
 });
 
 //Get filename from message queue and transcode
-function transcode(name)
+async function transcode(name)
 {
     const dir = "videos/";
     const file = dir + name;
