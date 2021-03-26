@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
 
-const corsLocal = "http://loclhost:8080";
+const corsLocal = "http://192.168.254.138:8080";
 const cors = "http://192.168.43.125:8080";
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
-    cors: { origin: cors }
+    cors: { origin: corsLocal }
 });
 
 const bodyParser = require("body-parser");
@@ -96,8 +96,8 @@ const storage = multer.diskStorage({
 
         cb(null, name);
 
-        testFirestore(db, file, name);
-        send(file, name);
+        //testFirestore(db, file, name);
+        //send(file, name);
     }
 });
 
@@ -128,8 +128,20 @@ io.use((socket, next) => {
     next();
 });
 
+const users = [];
+
 io.on("connection", (socket) => {
-    console.log("A user connected: " + socket.username);
+    //Push new user to user list
+    users.push({
+        username: socket.username,
+        socketId: socket.id
+    });
+
+    users.forEach(element => {
+        console.log(element);
+    });
+
+    console.log("\nA user connected: " + socket.username);
     console.log("SocketID: " + socket.id);
 
     socket.on("userChoice", (content) => {
@@ -137,18 +149,17 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("User disconnected");
+        //Delete user from user list on disconnect
+        console.log("User disconnected: " + socket.username);
+        users.splice(users.findIndex(v => v.username === socket.username), 1);
     });
 
-    //fileWatching(socket);
+    fileWatching();
 });
 
-//TODO: Send socket message to user when video is finished transcoding
-//Send message to specific user when video is transcoded. Current implementation is broadcasting every video to user
-//Need to think of way of tying socket.id and username/filename together for each user. Store in DB maybe?
-async function fileWatching(socket)
+async function fileWatching()
 {
-    var fileLocation = ("../files");
+    var fileLocation = ("../files/finished");
 
     var watcher = chokidar.watch(".", {
         persistent: false,
@@ -156,10 +167,25 @@ async function fileWatching(socket)
     });
 
     watcher.on("add", path => {
+        console.log("New file detected: " + path);
+
         const split = path.split(".");
 
-        //socket.emit("fileReady", split[0]);
-        socket.to(socket.id).emit("fileReady", split[0]);
+        //Search for matching username to send file to 
+        users.every((element, index) => {
+            if (element.username === split[0])
+            {
+                //socket.to(element.socketId).emit("fileReady", split[0]);
+                io.to(element.socketId).emit("fileReady", split[0]);
+                return false;
+            }
+            else //Can't find currently connected user to deliver file to 
+            {
+                console.log("User match not found");
+            }
+
+            return true;
+        });
     });
 }
 

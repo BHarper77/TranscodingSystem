@@ -13,6 +13,8 @@ socket.onAny((event, args) => {
 const uploadForm = document.getElementById("uploadForm");
 const inpFile = document.getElementById("inpFile");
 
+var isFileChosen = false;
+
 //Update page when user selects file
 inpFile.onchange = () => {
     var files = inpFile.files;
@@ -21,10 +23,20 @@ inpFile.onchange = () => {
     document.getElementById("title").innerHTML = file.name;
     document.getElementById("size").innerHTML = file.size / 1024 / 1024 + "MB";
     document.getElementById("type").innerHTML = file.type;
+
+    isFileChosen = true;
 };
 
 uploadForm.addEventListener("submit", e => {
     e.preventDefault();
+
+    if(!isFileChosen)
+    {
+        window.alert("Please chose a file to upload");
+        return;
+    }
+
+    isFileChosen = true;
 
     //Generate unique filename
     var randNum = function()
@@ -38,7 +50,6 @@ uploadForm.addEventListener("submit", e => {
     var x = randNum();
     var name = `${x}-${Date.now()}`;
 
-    const endpoint = "http://localhost:3000/save-file";
     const server = "http://192.168.254.138:3000/save-file";
 
     const formData = new FormData();
@@ -48,11 +59,6 @@ uploadForm.addEventListener("submit", e => {
 
     //Open socket channel to server on form submission
     socketInit(name);
-
-    for (var value of formData.values())
-    {
-        console.log(value);
-    }
 
     fetch(server, {
         mode: "no-cors",
@@ -65,28 +71,19 @@ uploadForm.addEventListener("submit", e => {
     }
 
     //Send user choice through socket channel
-    socketMessage(userChoice);
+    //socketMessage(userChoice);
 });
 
 function socketInit(username) 
 {
     socket.usernameAlreadySelected = true;
     socket.auth = { username };
-    console.log(username);
     socket.connect();
 }
 
 socket.on("connect", () => {
-    console.log(socket.id);
-});
-
-function socketMessage(userChoice)
-{
-    socket.emit("userChoice", userChoice);
-}
-
-socket.on("fileReady", (content) => {
-    console.log("From server: " + content);
+    console.log("Socket username: " + socket.auth.username);
+    console.log("Socket ID: " + socket.id);
 });
 
 socket.on("connect_error", (err) => {
@@ -95,3 +92,18 @@ socket.on("connect_error", (err) => {
         this.usernameAlreadySelected = false;
     }
 });
+
+function socketMessage(userChoice)
+{
+    socket.emit("userChoice", userChoice);
+}
+
+socket.on("fileReady", (content) => {
+    retrieveFile(content);
+});
+
+//TODO: Implement way of retrieveing file from server
+function retrieveFile(filename)
+{
+
+}
