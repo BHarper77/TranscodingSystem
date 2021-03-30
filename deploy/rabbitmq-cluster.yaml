@@ -20,6 +20,8 @@ spec:
                 - containerPort: 5672
                   name: amqp
                 env:
+                - name: RABBITMQ_NODENAME
+                  value: rabbit@rabbitmq-cluster-server-0.rabbitmq-cluster-nodes.default #TODO: RabbitMQ node can't contact correct nodename (rabbitmqctl command not working)
                 - name: RABBITMQ_ERLANG_COOKIE
                   valueFrom:
                     secretKeyRef:

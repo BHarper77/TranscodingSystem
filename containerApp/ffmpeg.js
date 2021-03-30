@@ -54,5 +54,5 @@ async function transcode(name)
         .on("end", function() {
             console.log(`${file} has finished transcoding`);
         })
-        .save(dir + `${split[0]}.mp4`);
+        .save(dir + "finished/" + `${split[0]}.mp4`);
 }
