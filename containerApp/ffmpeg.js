@@ -27,6 +27,7 @@ amqp.connect(cluster, function(error0, connection)
 
             transcode(msg.content.toString());
 
+            console.log("Transcoding finished");
             //process.exit(0);
         }, {
             noAck: true
@@ -35,6 +36,9 @@ amqp.connect(cluster, function(error0, connection)
 });
 
 //Get filename from message queue and transcode
+//TODO: Container not exiting immediately after transcoding is done (hangs too long)
+//      No progress is being displayed
+//      Might be better when doing proper tasks
 async function transcode(name)
 {
     const dir = "videos/";
@@ -50,6 +54,9 @@ async function transcode(name)
         .on("error", function(err, stdout, stderr) {
             console.log(`${file} could not be transcoded`);
             console.log(`${err} \n ${stdout} \n ${stderr}`);
+        })
+        .on("progress", function(progress) {
+            console.log(`Processing: ${progress.percent}% done`);
         })
         .on("end", function() {
             console.log(`${file} has finished transcoding`);

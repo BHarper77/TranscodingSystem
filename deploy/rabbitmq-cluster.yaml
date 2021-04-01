@@ -21,7 +21,7 @@ spec:
                   name: amqp
                 env:
                 - name: RABBITMQ_NODENAME
-                  value: rabbit@rabbitmq-cluster-server-0.rabbitmq-cluster-nodes.default #TODO: RabbitMQ node can't contact correct nodename (rabbitmqctl command not working)
+                  value: rabbit@rabbitmq-cluster-server-0.rabbitmq-cluster-nodes.default
                 - name: RABBITMQ_ERLANG_COOKIE
                   valueFrom:
                     secretKeyRef:

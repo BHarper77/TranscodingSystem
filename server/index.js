@@ -32,18 +32,14 @@ function send(name)
             if (error1) throw error1;
 
             const queue = "files";
-            var msg = {
-                name: name
-            };
-
-            var msgJson = JSON.stringify(msg);
+            var msg = name;
 
             channel.assertQueue(queue, {
                 durable: false
             });
 
-            channel.sendToQueue(queue, Buffer.from(msgJson));
-            console.log("Message sent:" + msg.name);
+            channel.sendToQueue(queue, Buffer.from(msg));
+            console.log("Message sent:" + msg);
         });
     });
 }
@@ -155,6 +151,7 @@ io.on("connection", (socket) => {
     fileWatching();
 });
 
+//TODO: Delete files in files dir when same file is in finished dir
 async function fileWatching()
 {
     var fileLocation = ("../files/finished");
