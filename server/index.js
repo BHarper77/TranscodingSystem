@@ -185,4 +185,4 @@ async function fileWatching()
 }
 
 const port = 3000;
-httpServer.listen(port, () => console.log(`Server is running on port ${port}`));
+httpServer.listen(port, () => console.log(`Server is running on: http://localhost:${port}/`));

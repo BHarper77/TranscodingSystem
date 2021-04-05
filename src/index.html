@@ -1,6 +1,13 @@
 <html>
     <head>
-        <link rel="stylesheet" href="home.css"> 
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Transcoding System</title>
+
+        <link rel="stylesheet" href="home.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
     </head>
     
     <script src="/socket.io/socket.io.js"></script>
@@ -8,20 +15,18 @@
     <body>
         <main>
             <div class="grid">
-                <div>
-                    <header class="gridItem item1">
-                        <h1 id="title">Title</h1>
-                    </header>
-                </div>
+                <header>
+                    <h1 id="title">Title</h1>
+                </header>
 
-                <div class="gridItem item2">
+                <div class="gridItem">
                     <form id="uploadForm" method="POST" enctype="multipart/form-data">
                         <input type="file" id="inpFile" name="file" accept="video/*, .mkv"><br>
                         <button type="submit">Upload File</button>
                     </form>
                 </div>
 
-                <div class="gridItem item3">
+                <div class="gridItem">
                     <table>
                         <tr>
                             <td>Title: </td>
@@ -38,7 +43,7 @@
                     </table>
                 </div>
             
-                <div class="gridItem item4">output</div>
+                <div class="gridItem">output</div>
             </div>
         </main>
     </body>

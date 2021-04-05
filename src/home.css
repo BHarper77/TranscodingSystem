@@ -1,27 +1,26 @@
 :root {
     --textColour: #36CEEE;
+    --font: 'Poppins';
 }
 
 #title {
     color: var(--textColour);
+    font-family: var(--font);
 }
 
 .grid {
     margin: auto;
     display: grid;
-    grid-template-areas: 
-        "header header header"
-        "input userChoice userChoice"
-        "output output output";
-}
+    max-width: 70%;
+    gap: 5px;
 
-.item1 { grid-area: header; }
-.item2 { grid-area: input; }
-.item3 { grid-area: userChoice; }
-.item4 { grid-area: output; }
+    grid-template-columns: repeat(auto-fit, minmax(auto, 1fr));
+}
 
 .gridItem {
     border-style: solid;
     border-width: 2px;
-    border-color: red;
+    border-color: #e3e3e3;
+    background-color: #e3e3e3;
+    border-radius: 5px;
 }
