@@ -91,7 +91,7 @@ const storage = multer.diskStorage({
         cb(null, name);
 
         //testFirestore(db, file, name);
-        send(name);
+        //send(name);
     }
 });
 
@@ -99,9 +99,28 @@ const upload = multer({storage});
 upload.any();
 
 app.post("/save-file", upload.single("file"), (req, res) => {
-    //Creates endpoint 'save-file' for POST requests to be sent to
     console.log("File received: " + req.body.name);
     res.end();
+});
+
+app.get("/get-file:filename", (req, res) => {
+    const { filename } = req.params;
+
+    //Search for user match
+    //TODO: Attach filetype to filename so Express can send file to user
+    users.every((element) => {
+        if (element.username === filename)
+        {
+            res.sendFile("../files/finished/" + filename);
+            return false;
+        }
+        else //Can't find currently connected user to deliver file to 
+        {
+            console.log("User match not found");
+        }
+
+        return true;
+    });
 });
 
 //Testing
@@ -167,7 +186,7 @@ async function fileWatching()
         const split = path.split(".");
 
         //Search for matching username to send file to 
-        users.every((element, index) => {
+        users.every((element) => {
             if (element.username === split[0])
             {
                 //socket.to(element.socketId).emit("fileReady", split[0]);
