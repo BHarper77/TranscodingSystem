@@ -1,7 +1,7 @@
 const url = "http://localhost:3000";
-const serverUrl = "http://192.168.254.138:3000";
+const server = "http://192.168.254.138:3000/";
 
-const socket = io(serverUrl, {
+const socket = io(server, {
     autoConnect: false,
     usernameAlreadySelected: false
 });
@@ -50,8 +50,6 @@ uploadForm.addEventListener("submit", e => {
     var x = randNum();
     var name = `${x}-${Date.now()}`;
 
-    const server = "http://192.168.254.138:3000/save-file";
-
     const formData = new FormData();
 
     formData.append("name", name);
@@ -62,7 +60,7 @@ uploadForm.addEventListener("submit", e => {
     //Open socket channel to server on form submission
     socketInit(name, nameSplit[1]);
 
-    fetch(server, {
+    fetch(server + "save-file", {
         mode: "no-cors",
         method: "POST",
         body: formData
@@ -80,9 +78,6 @@ function socketInit(username, filetype)
 {
     socket.usernameAlreadySelected = true;
     socket.auth = { username, filetype };
-    //socket.filetype = filetype;
-
-    console.log(socket);
     socket.connect();
 }
 
@@ -109,7 +104,7 @@ socket.on("fileReady", (content) => {
 
 function retrieveFile(filename)
 {
-    fetch("192.168.254.138:3000/get-file:" + filename, {
+    fetch(server + "get-file/" + filename, {
         mode: "no-cors",
         method: "GET"
     })

@@ -18,6 +18,7 @@ const amqp = require("amqplib/callback_api");
 const { json } = require("body-parser");
 
 const chokidar = require("chokidar");
+const path = require("path");
 
 //Send message to RabbitMQ
 function send(name)
@@ -103,20 +104,29 @@ app.post("/save-file", upload.single("file"), (req, res) => {
     res.end();
 });
 
-app.get("/get-file:filename", (req, res) => {
+app.get("/get-file/:filename", (req, res) => {
     const { filename } = req.params;
+    const split = filename.split(".");
+
+    if (!filename)
+    {
+        console.log("/get-file: No filename");
+        res.status(410).send("Attach filename");
+    }
 
     //Search for user match
-    //TODO: Test videos being returned to user
     users.every((element) => {
-        if (element.username === filename)
+        if (element.username === split[0])
         {
-            res.sendFile("../files/finished/" + filename);
+            console.log("Server sending file");
+            res.sendFile(path.join(__dirname, "../files/finished/") + element.fullFileName);
+            //TODO: Delete file when client has downloaded it
             return false;
         }
         else //Can't find currently connected user to deliver file to 
         {
-            console.log("User match not found");
+            console.log("/get-file: User match not found");
+            res.status(510).send("File not found");
         }
 
         return true;
@@ -183,6 +193,7 @@ async function fileWatching()
         cwd: fileLocation
     });
 
+    //FIXME: Event triggering multiple times for each file
     watcher.on("add", path => {
         console.log("New file detected: " + path);
 
@@ -193,12 +204,12 @@ async function fileWatching()
             if (element.username === split[0])
             {
                 //socket.to(element.socketId).emit("fileReady", split[0]);
-                io.to(element.socketId).emit("fileReady", path);
+                io.to(element.socketId).emit("fileReady", split[0]);
                 return false;
             }
             else //Can't find currently connected user to deliver file to 
             {
-                console.log("User match not found");
+                console.log("fileWatching: User match not found");
             }
 
             return true;
