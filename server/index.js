@@ -14,9 +14,9 @@ const multer = require("multer");
 const firebaseAdmin = require("firebase-admin");
 const serviceAccount = require("../honours-project-88f0c-firebase-adminsdk-pjyfq-be29971c7a.json");
 
-const amqp = require("amqplib/callback_api");
 const { json } = require("body-parser");
 
+const amqp = require("amqplib/callback_api");
 const chokidar = require("chokidar");
 const path = require("path");
 
@@ -45,6 +45,7 @@ function send(name)
     });
 }
 
+//#region FIRESTORE
 //Initialize Firebase SDK
 firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(serviceAccount)
@@ -54,7 +55,7 @@ const db = firebaseAdmin.firestore();
 const filePath = "files";
 
 //Insert data into Firestore
-async function testFirestore(db, file, name)
+async function firestore(db, file, name)
 {
     var currentdate = new Date(); 
     var datetime = currentdate.getDate() + "/"
@@ -76,7 +77,9 @@ async function testFirestore(db, file, name)
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+//#endregion
 
+//#region MULTER
 //Tell Multer where to store file and what to call file
 const storage = multer.diskStorage({
     destination: function (req, file, cb)
@@ -85,47 +88,41 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb)
     {
-        //var x = randNum();
         const fileType = file.mimetype.split("/");
         var name = `${req.body.name}.${fileType[1]}`;
 
         cb(null, name);
 
-        //testFirestore(db, file, name);
+        //firestore(db, file, name);
         //send(name);
     }
 });
 
 const upload = multer({storage});
 upload.any();
+//#endregion
 
+//#region ENDPOINTS
 app.post("/save-file", upload.single("file"), (req, res) => {
     console.log("File received: " + req.body.name);
-    res.end();
 });
 
 app.get("/get-file/:filename", (req, res) => {
     const { filename } = req.params;
     const split = filename.split(".");
 
-    if (!filename)
-    {
-        console.log("/get-file: No filename");
-        res.status(410).send("Attach filename");
-    }
+    if (!filename) { res.status(410).send("Attach filename"); }
 
     //Search for user match
     users.every((element) => {
         if (element.username === split[0])
         {
-            console.log("Server sending file");
             res.sendFile(path.join(__dirname, "../files/finished/") + element.fullFileName);
             //TODO: Delete file when client has downloaded it
             return false;
         }
-        else //Can't find currently connected user to deliver file to 
+        else //Can't find user to deliver file to 
         {
-            console.log("/get-file: User match not found");
             res.status(510).send("File not found");
         }
 
@@ -137,6 +134,10 @@ app.get("/get-file/:filename", (req, res) => {
 app.post("/test", (req, res) => {
     res.end();
 });
+//#endregion
+
+//#region SOCKETS
+const users = [];
 
 //Initialise socket with username from client side
 io.use((socket, next) => {
@@ -153,8 +154,6 @@ io.use((socket, next) => {
     next();
 });
 
-const users = [];
-
 io.on("connection", (socket) => {
     //Push new user to user list
     users.push({
@@ -163,12 +162,7 @@ io.on("connection", (socket) => {
         fullFileName: `${socket.username}.${socket.filetype}`
     });
 
-    users.forEach(element => {
-        console.log(element);
-    });
-
     console.log("\nA user connected: " + socket.username);
-    console.log("SocketID: " + socket.id);
 
     socket.on("userChoice", (content) => {
         console.log("userChoice: " + content.test);
@@ -176,12 +170,12 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         //Delete user from user list on disconnect
-        console.log("User disconnected: " + socket.username);
         users.splice(users.findIndex(v => v.username === socket.username), 1);
     });
 
     fileWatching();
 });
+//#endregion
 
 //TODO: Delete files in files dir when same file is in finished dir
 async function fileWatching()
@@ -203,11 +197,10 @@ async function fileWatching()
         users.every((element) => {
             if (element.username === split[0])
             {
-                //socket.to(element.socketId).emit("fileReady", split[0]);
                 io.to(element.socketId).emit("fileReady", split[0]);
                 return false;
             }
-            else //Can't find currently connected user to deliver file to 
+            else //Can't find user to deliver file to 
             {
                 console.log("fileWatching: User match not found");
             }

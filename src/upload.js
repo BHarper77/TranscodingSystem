@@ -99,13 +99,9 @@ function socketMessage(userChoice)
 }
 
 socket.on("fileReady", (content) => {
-    retrieveFile(content);
-});
+    const output = document.getElementById("output");
 
-function retrieveFile(filename)
-{
-    fetch(server + "get-file/" + filename, {
-        mode: "no-cors",
-        method: "GET"
-    })
-}
+    output.style.visibility = "visible";
+    output.href = server + "get-file/";
+    output.download = content;
+});
