@@ -57,8 +57,10 @@ uploadForm.addEventListener("submit", e => {
     formData.append("name", name);
     formData.append("file", inpFile.files[0]);
 
+    const nameSplit = inpFile.files[0].name.split(".");
+
     //Open socket channel to server on form submission
-    socketInit(name);
+    socketInit(name, nameSplit[1]);
 
     fetch(server, {
         mode: "no-cors",
@@ -74,10 +76,13 @@ uploadForm.addEventListener("submit", e => {
     //socketMessage(userChoice);
 });
 
-function socketInit(username) 
+function socketInit(username, filetype) 
 {
     socket.usernameAlreadySelected = true;
-    socket.auth = { username };
+    socket.auth = { username, filetype };
+    //socket.filetype = filetype;
+
+    console.log(socket);
     socket.connect();
 }
 
@@ -102,8 +107,10 @@ socket.on("fileReady", (content) => {
     retrieveFile(content);
 });
 
-//TODO: Implement way of retrieveing file from server
 function retrieveFile(filename)
 {
-
+    fetch("192.168.254.138:3000/get-file:" + filename, {
+        mode: "no-cors",
+        method: "GET"
+    })
 }

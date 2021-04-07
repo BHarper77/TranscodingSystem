@@ -107,7 +107,7 @@ app.get("/get-file:filename", (req, res) => {
     const { filename } = req.params;
 
     //Search for user match
-    //TODO: Attach filetype to filename so Express can send file to user
+    //TODO: Test videos being returned to user
     users.every((element) => {
         if (element.username === filename)
         {
@@ -131,6 +131,7 @@ app.post("/test", (req, res) => {
 //Initialise socket with username from client side
 io.use((socket, next) => {
     const username = socket.handshake.auth.username;
+    const filetype = socket.handshake.auth.filetype;
 
     if (!username)
     {
@@ -138,6 +139,7 @@ io.use((socket, next) => {
     }
 
     socket.username = username;
+    socket.filetype = filetype;
     next();
 });
 
@@ -147,7 +149,8 @@ io.on("connection", (socket) => {
     //Push new user to user list
     users.push({
         username: socket.username,
-        socketId: socket.id
+        socketId: socket.id,
+        fullFileName: `${socket.username}.${socket.filetype}`
     });
 
     users.forEach(element => {
@@ -190,7 +193,7 @@ async function fileWatching()
             if (element.username === split[0])
             {
                 //socket.to(element.socketId).emit("fileReady", split[0]);
-                io.to(element.socketId).emit("fileReady", split[0]);
+                io.to(element.socketId).emit("fileReady", path);
                 return false;
             }
             else //Can't find currently connected user to deliver file to 
