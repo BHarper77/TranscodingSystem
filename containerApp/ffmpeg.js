@@ -3,12 +3,10 @@ const ffmpeg = require("fluent-ffmpeg");
 
 const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861"
 
-amqp.connect(cluster, function(error0, connection) 
-{
+amqp.connect(cluster, (error0, connection) => {
     if (error0) throw error0;
 
-    connection.createChannel(function(error1, channel)
-    {
+    connection.createChannel((error1, channel) => {
         if (error1) throw error1;
 
         const queue = "files";
@@ -20,15 +18,16 @@ amqp.connect(cluster, function(error0, connection)
         console.log(`Waiting for messages in ${queue}`);
 
         //Receive one message from queue and exit
-        channel.consume(queue, function(msg) {
-            console.log("Message received: " + msg.content.toString());
+        //FIXME: Container not receiving or not consuming messages from queue
+        channel.consume(queue, (msg) => {
+            console.log("Message received: " + msg.content);
+
+            user = JSON.parse(msg.content);
+
             channel.close();
             connection.close();
 
-            transcode(msg.content.toString());
-
-            console.log("Transcoding finished");
-            //process.exit(0);
+            transcode(user);
         }, {
             noAck: true
         });
@@ -39,27 +38,28 @@ amqp.connect(cluster, function(error0, connection)
 //TODO: Container not exiting immediately after transcoding is done (hangs too long)
 //      No progress is being displayed
 //      Might be better when doing proper tasks
-async function transcode(name)
+async function transcode(user)
 {
-    const dir = "videos/";
-    const file = dir + name;
-    const split = name.split(".");
+    const dir = "../files/";
+    const file = dir + user.fullFileName;
 
+    //TODO: Try to improve speed of transcoding, currently slow
     ffmpeg(file)
-        //.format("mp4")
-        .outputOptions("-codec copy")
-        .on("start", function(commandLine) {
+        .videoCodec(user.userChoice.encoder)
+        .format(user.userChoice.format)
+        .size(user.userChoice.resolution)
+        .on("start", (commandLine) => {
             console.log("Transcoding started with command: " + commandLine);
         })
-        .on("error", function(err, stdout, stderr) {
+        .on("progress", (progress) => {
+            console.log(`Processing ${progress.percent}% done`);
+        })
+        .on("error", (err, stdout, stderr) => {
             console.log(`${file} could not be transcoded`);
             console.log(`${err} \n ${stdout} \n ${stderr}`);
         })
-        .on("progress", function(progress) {
-            console.log(`Processing: ${progress.percent}% done`);
-        })
-        .on("end", function() {
+        .on("end", () => {
             console.log(`${file} has finished transcoding`);
         })
-        .save(dir + "finished/" + `${split[0]}.mp4`);
+        .save(dir + "finished/" + `${user.username}.${user.userChoice.format}`);
 }

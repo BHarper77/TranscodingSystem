@@ -26,10 +26,10 @@ function send(newUser)
     const localHost = "amqp://127.0.0.1:5672";
     const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861";
 
-    amqp.connect(cluster, function(error0, connection) {
+    amqp.connect(cluster, (error0, connection) => {
         if (error0) throw error0;
 
-        connection.createChannel(function(error1, channel) {
+        connection.createChannel((error1, channel) => {
             if (error1) throw error1;
 
             const queue = "files";
@@ -38,8 +38,10 @@ function send(newUser)
                 durable: false
             });
 
-            channel.sendToQueue(queue, Buffer.from(newUser));
-            console.log("Message sent:" + newUser);
+            msgJson = JSON.stringify(newUser);
+
+            channel.sendToQueue(queue, Buffer.from(msgJson));
+            console.log("Message sent:" + msgJson);
         });
     });
 }
@@ -163,7 +165,7 @@ io.on("connection", (socket) => {
         userChoice: socket.userChoice 
     }
 
-    //send(newUser);
+    send(newUser);
     users.push(newUser);
 
     console.log("\nA user connected: " + socket.username);
