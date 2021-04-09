@@ -30,6 +30,8 @@ inpFile.onchange = () => {
 uploadForm.addEventListener("submit", e => {
     e.preventDefault();
 
+    validate();
+
     if(!isFileChosen)
     {
         window.alert("Please chose a file to upload");
@@ -57,27 +59,30 @@ uploadForm.addEventListener("submit", e => {
 
     const nameSplit = inpFile.files[0].name.split(".");
 
+    //Get user choice
+    const format = document.getElementById("format");
+    const resolution = document.getElementById("resolution");
+
+    const userChoice = {
+        format: format.options[format.selectedIndex].text,
+        resolution: resolution.options[resolution.selectedIndex].text
+    }
+
     //Open socket channel to server on form submission
-    socketInit(name, nameSplit[1]);
+    socketInit(name, nameSplit[1], userChoice);
 
     fetch(server + "save-file", {
         mode: "no-cors",
         method: "POST",
         body: formData
     }).catch(console.error)
-
-    const userChoice = {
-        test: "mp4"
-    }
-
-    //Send user choice through socket channel
-    //socketMessage(userChoice);
 });
 
-function socketInit(username, filetype) 
+//#region SOCKETS
+function socketInit(username, filetype, userChoice) 
 {
     socket.usernameAlreadySelected = true;
-    socket.auth = { username, filetype };
+    socket.auth = { username, filetype , userChoice};
     socket.connect();
 }
 
@@ -105,3 +110,4 @@ socket.on("fileReady", (content) => {
     output.href = server + "get-file/";
     output.download = content;
 });
+//#endregion

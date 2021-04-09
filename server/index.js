@@ -143,14 +143,16 @@ const users = [];
 io.use((socket, next) => {
     const username = socket.handshake.auth.username;
     const filetype = socket.handshake.auth.filetype;
+    const userChoice = socket.handshake.auth.userChoice;
 
-    if (!username)
+    if (!username || !filetype || !userChoice)
     {
-        return next(new Error("invalid username"));
+        return next(new Error("Missing parameter from socket object"));
     }
 
     socket.username = username;
     socket.filetype = filetype;
+    socket.userChoice = userChoice;
     next();
 });
 
