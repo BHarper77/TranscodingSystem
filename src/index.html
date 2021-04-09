@@ -24,13 +24,18 @@
                         <input type="file" id="inpFile" name="file" accept="video/*, .mkv"><br>
                         <label>Format</label>
                             <select id="format" name="format">
-                                <option value="MP4">MP4</option>
-                                <option value="MKV">MKV</option>
+                                <option value="mp4">MP4</option>
+                                <option value="mkv">MKV</option>
                             </select><br>
                         <label>Resolution</label>
                             <select id="resolution" name="resolution">
-                                <option value="1080">1080</option>
-                                <option value="720">720</option>
+                                <option value="1920x1080">1080</option>
+                                <option value="1280x720">720</option>
+                            </select><br>
+                        <label>Encoder</label>
+                            <select id="encoder" name="encoder">
+                                <option value="libx264">H.264</option>
+                                <option value="libx265">H.265</option>
                             </select><br>
                         <button type="submit">Upload File</button>
                     </form>

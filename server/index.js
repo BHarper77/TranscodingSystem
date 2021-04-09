@@ -21,7 +21,7 @@ const chokidar = require("chokidar");
 const path = require("path");
 
 //Send message to RabbitMQ
-function send(name)
+function send(newUser)
 {
     const localHost = "amqp://127.0.0.1:5672";
     const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861";
@@ -33,14 +33,13 @@ function send(name)
             if (error1) throw error1;
 
             const queue = "files";
-            var msg = name;
 
             channel.assertQueue(queue, {
                 durable: false
             });
 
-            channel.sendToQueue(queue, Buffer.from(msg));
-            console.log("Message sent:" + msg);
+            channel.sendToQueue(queue, Buffer.from(newUser));
+            console.log("Message sent:" + newUser);
         });
     });
 }
@@ -94,7 +93,6 @@ const storage = multer.diskStorage({
         cb(null, name);
 
         //firestore(db, file, name);
-        //send(name);
     }
 });
 
@@ -158,20 +156,21 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
     //Push new user to user list
-    users.push({
+    newUser = {
         username: socket.username,
         socketId: socket.id,
-        fullFileName: `${socket.username}.${socket.filetype}`
-    });
+        fullFileName: `${socket.username}.${socket.filetype}`,
+        userChoice: socket.userChoice 
+    }
+
+    //send(newUser);
+    users.push(newUser);
 
     console.log("\nA user connected: " + socket.username);
 
-    socket.on("userChoice", (content) => {
-        console.log("userChoice: " + content.test);
-    });
-
     socket.on("disconnect", () => {
         //Delete user from user list on disconnect
+        console.log("User disconnected: " + socket.username);
         users.splice(users.findIndex(v => v.username === socket.username), 1);
     });
 

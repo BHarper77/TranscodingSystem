@@ -30,8 +30,6 @@ inpFile.onchange = () => {
 uploadForm.addEventListener("submit", e => {
     e.preventDefault();
 
-    validate();
-
     if(!isFileChosen)
     {
         window.alert("Please chose a file to upload");
@@ -62,10 +60,12 @@ uploadForm.addEventListener("submit", e => {
     //Get user choice
     const format = document.getElementById("format");
     const resolution = document.getElementById("resolution");
+    const encoder = document.getElementById("encoder");
 
     const userChoice = {
         format: format.options[format.selectedIndex].text,
-        resolution: resolution.options[resolution.selectedIndex].text
+        resolution: resolution.options[resolution.selectedIndex].text,
+        encoder: encoder.options[encoder.selectedIndex].text
     }
 
     //Open socket channel to server on form submission
@@ -83,6 +83,7 @@ function socketInit(username, filetype, userChoice)
 {
     socket.usernameAlreadySelected = true;
     socket.auth = { username, filetype , userChoice};
+    console.log(socket);
     socket.connect();
 }
 
