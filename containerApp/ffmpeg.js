@@ -19,6 +19,7 @@ amqp.connect(cluster, (error0, connection) => {
 
         //Receive one message from queue and exit
         //FIXME: Container not receiving or not consuming messages from queue
+        //       Could try creating new user and giving it to container to see where messages are going
         channel.consume(queue, (msg) => {
             console.log("Message received: " + msg.content);
 
