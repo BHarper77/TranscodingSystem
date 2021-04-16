@@ -1,3 +1,4 @@
+//#region IMPORTS
 const express = require("express");
 const app = express();
 
@@ -19,6 +20,7 @@ const { json } = require("body-parser");
 const amqp = require("amqplib/callback_api");
 const chokidar = require("chokidar");
 const path = require("path");
+//#endregion
 
 //Send message to RabbitMQ
 function send(newUser)
@@ -32,15 +34,15 @@ function send(newUser)
         connection.createChannel((error1, channel) => {
             if (error1) throw error1;
 
-            const queue = "files";
+            const queueFFmpeg = "files";
 
-            channel.assertQueue(queue, {
+            channel.assertQueue(queueFFmpeg, {
                 durable: false
             });
 
             msgJson = JSON.stringify(newUser);
 
-            channel.sendToQueue(queue, Buffer.from(msgJson));
+            channel.sendToQueue(queueFFmpeg, Buffer.from(msgJson));
             console.log("Message sent:" + msgJson);
         });
     });

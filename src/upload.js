@@ -63,9 +63,9 @@ uploadForm.addEventListener("submit", e => {
     const encoder = document.getElementById("encoder");
 
     const userChoice = {
-        format: format.options[format.selectedIndex].text,
-        resolution: resolution.options[resolution.selectedIndex].text,
-        encoder: encoder.options[encoder.selectedIndex].text
+        format: format.options[format.selectedIndex].value,
+        resolution: resolution.options[resolution.selectedIndex].value,
+        encoder: encoder.options[encoder.selectedIndex].value
     }
 
     //Open socket channel to server on form submission
