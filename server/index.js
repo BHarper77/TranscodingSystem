@@ -198,7 +198,7 @@ async function fileWatching()
 
         const split = path.split(".");
 
-        //Search for matching username to send file to 
+        //Search for matching user 
         users.every((element) => {
             if (element.username === split[0])
             {

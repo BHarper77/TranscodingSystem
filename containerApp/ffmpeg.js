@@ -18,7 +18,7 @@ amqp.connect(clusterFFmpeg, (error0, connection) => {
 
         console.log(`Waiting for messages in ${queue}`);
 
-        //FIXME: Container can't find video (ffmpeg exits with no dir found error)
+        //FIXME: FFmpeg saves video in finished dir before transcoding is finished
         channel.consume(queue, (msg) => {
             console.log("Message received: " + msg.content.toString());
             user = JSON.parse(msg.content.toString());
@@ -32,7 +32,7 @@ amqp.connect(clusterFFmpeg, (error0, connection) => {
 
 function transcode(user)
 {
-    const dir = "/videos/";
+    const dir = "videos/";
     const file = dir + user.fullFileName;
 
     ffmpeg(file)
@@ -53,9 +53,4 @@ function transcode(user)
             console.log(`${file} has finished transcoding`);
         })
         .save(dir + "finished/" + `${user.username}.${user.userChoice.format}`);
-}
-
-async function delay(ms) 
-{
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
