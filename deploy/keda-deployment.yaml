@@ -7,6 +7,7 @@ spec:
     name: ffmpeg
   minReplicaCount: 0
   maxReplicaCount: 10
+  cooldownPeriod: 1200
   triggers:
   - type: rabbitmq
     metadata:

@@ -1,5 +1,6 @@
 const amqp = require("amqplib/callback_api");
-const ffmpeg = require("fluent-ffmpeg");
+const ffmpeg = require("fluent-ffmpeg"); 
+const mv = require("mv");
 
 const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861"
 const clusterFFmpeg = "amqp://ffmpeg:ffmpeg@192.168.49.2:30861"
@@ -16,16 +17,18 @@ amqp.connect(clusterFFmpeg, (error0, connection) => {
             durable: false
         });
 
+        channel.prefetch(1);
+
         console.log(`Waiting for messages in ${queue}`);
 
-        //FIXME: FFmpeg saves video in finished dir before transcoding is finished
         channel.consume(queue, (msg) => {
             console.log("Message received: " + msg.content.toString());
             user = JSON.parse(msg.content.toString());
+            channel.ack(msg);
 
             transcode(user);
         }, {
-            noAck: true
+            noAck: false
         });
     });
 });
@@ -51,6 +54,13 @@ function transcode(user)
         })
         .on("end", () => {
             console.log(`${file} has finished transcoding`);
+            let oldPath = dir + "transcoding/" + `${user.username}.${user.userChoice.format}`;
+            let newPath = dir + "finished/" + `${user.username}.${user.userChoice.format}`;
+
+            mv(oldPath, newPath, (err) => {
+                if (err) throw err;
+                console.log(`File ${user.fullFileName} moved to /finished`);
+            });
         })
-        .save(dir + "finished/" + `${user.username}.${user.userChoice.format}`);
+        .save(dir + "transcoding/" + `${user.username}.${user.userChoice.format}`);
 }

@@ -6,10 +6,6 @@ const socket = io(server, {
     usernameAlreadySelected: false
 });
 
-socket.onAny((event, args) => {
-    console.log(event, args);
-});
-
 const uploadForm = document.getElementById("uploadForm");
 const inpFile = document.getElementById("inpFile");
 
@@ -80,6 +76,10 @@ uploadForm.addEventListener("submit", e => {
 });
 
 //#region SOCKETS
+socket.onAny((event, args) => {
+    console.log(event, args);
+});
+
 function socketInit(username, filetype, userChoice) 
 {
     socket.usernameAlreadySelected = true;
@@ -107,9 +107,9 @@ function socketMessage(userChoice)
 
 socket.on("fileReady", (content) => {
     const output = document.getElementById("output");
+    const download = document.getElementById("download");
 
     output.style.visibility = "visible";
-    output.href = server + "get-file/";
-    output.download = content;
+    download.href = "192.168.254.138:3000/get-file/" + content;
 });
 //#endregion

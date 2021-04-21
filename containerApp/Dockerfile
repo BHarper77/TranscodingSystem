@@ -8,7 +8,7 @@ RUN apt-get update &&\
 WORKDIR /home/user
 
 #Install npm packages
-RUN npm install amqplib fluent-ffmpeg
+RUN npm install amqplib fluent-ffmpeg mv
 
 COPY . .
 

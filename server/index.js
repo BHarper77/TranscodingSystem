@@ -107,6 +107,8 @@ upload.any();
 //#region ENDPOINTS
 app.post("/save-file", upload.single("file"), (req, res) => {
     console.log("File received: " + req.body.name);
+    res.status(200);
+    res.end();
 });
 
 app.get("/get-file/:filename", (req, res) => {
@@ -177,43 +179,39 @@ io.on("connection", (socket) => {
         console.log("User disconnected: " + socket.username);
         users.splice(users.findIndex(v => v.username === socket.username), 1);
     });
-
-    fileWatching();
 });
 //#endregion
 
+//#region FILEWATCHINGs
 //TODO: Delete files in files dir when same file is in finished dir
-async function fileWatching()
-{
-    var fileLocation = ("../files/finished");
+var fileLocation = "../files/finished";
 
-    var watcher = chokidar.watch(".", {
-        persistent: false,
-        cwd: fileLocation
+var watcher = chokidar.watch(".", {
+    persistent: true,
+    cwd: fileLocation
+});
+
+watcher.on("add", (path) => {
+    console.log("New file detected: " + path);
+
+    const split = path.split(".");
+
+    //Search for matching user 
+    users.every((element) => {
+        if (element.username === split[0])
+        {
+            io.to(element.socketId).emit("fileReady", split[0]);
+            return false;
+        }
+        else //Can't find user
+        {
+            console.log("fileWatching: User match not found");
+        }
+
+        return true;
     });
-
-    //FIXME: Event triggering multiple times for each file
-    watcher.on("add", path => {
-        console.log("New file detected: " + path);
-
-        const split = path.split(".");
-
-        //Search for matching user 
-        users.every((element) => {
-            if (element.username === split[0])
-            {
-                io.to(element.socketId).emit("fileReady", split[0]);
-                return false;
-            }
-            else //Can't find user to deliver file to 
-            {
-                console.log("fileWatching: User match not found");
-            }
-
-            return true;
-        });
-    });
-}
+});
+//#endregion
 
 const port = 3000;
 httpServer.listen(port, () => console.log(`Server is running on: http://localhost:${port}/`));
