@@ -121,6 +121,7 @@ app.get("/get-file/:filename", (req, res) => {
     users.every((element) => {
         if (element.username === split[0])
         {
+            //TODO: Look at using Nginx to handle file delivery
             res.sendFile(path.join(__dirname, "../files/finished/") + element.fullFileName);
             //TODO: Delete file when client has downloaded it
             return false;

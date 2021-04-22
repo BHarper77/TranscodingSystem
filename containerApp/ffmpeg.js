@@ -26,7 +26,7 @@ amqp.connect(clusterFFmpeg, (error0, connection) => {
             user = JSON.parse(msg.content.toString());
             channel.ack(msg);
 
-            transcode(user);
+            message = msg;
         }, {
             noAck: false
         });
