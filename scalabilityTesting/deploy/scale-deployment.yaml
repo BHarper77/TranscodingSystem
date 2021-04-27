@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scale-deployment
+  labels:
+    app: scale-deployment
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app: scale-deployment
+  template:
+    metadata:
+      labels:
+        app: scale-deployment
+    spec:
+      containers:
+        - name: scale-deployment
+          image: bharper7/scale:v1
+          imagePullPolicy: Never

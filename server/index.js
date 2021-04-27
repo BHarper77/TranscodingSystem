@@ -5,6 +5,7 @@ const app = express();
 const corsLocal = "http://192.168.254.138:8080";
 const cors = "http://192.168.43.125:8080";
 const httpServer = require("http").createServer(app);
+//FIXME: Using Nginx as proxy breaks CORS for SocketIO
 const io = require("socket.io")(httpServer, {
     cors: { origin: corsLocal }
 });
@@ -37,7 +38,7 @@ function send(newUser)
             const queueFFmpeg = "files";
 
             channel.assertQueue(queueFFmpeg, {
-                durable: false
+                durable: true
             });
 
             msgJson = JSON.stringify(newUser);

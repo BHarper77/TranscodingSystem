@@ -1,17 +1,17 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: keda-deployment
+  name: scale-keda-deployment
 spec:
   scaleTargetRef:
-    name: ffmpeg
+    name: scale-deployment
   minReplicaCount: 0
-  maxReplicaCount: 10
-  cooldownPeriod: 900 #15 minutes, leaves time for transcoding to finish
+  maxReplicaCount: 100
+  cooldownPeriod: 1200
   triggers:
   - type: rabbitmq
     metadata:
       host: amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861
       mode: QueueLength
       value: "1"
-      queueName: files
+      queueName: scaleTest

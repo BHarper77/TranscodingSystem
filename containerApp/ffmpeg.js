@@ -5,33 +5,44 @@ const mv = require("mv");
 const cluster = "amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861"
 const clusterFFmpeg = "amqp://ffmpeg:ffmpeg@192.168.49.2:30861"
 
+let amqpChannel = null;
+let queue = "files";
+
 amqp.connect(clusterFFmpeg, (error0, connection) => {
     if (error0) throw error0;
 
     connection.createChannel((error1, channel) => {
         if (error1) throw error1;
 
-        const queue = "files";
-
-        channel.assertQueue(queue, {
-            durable: false
-        });
-
         channel.prefetch(1);
-
-        console.log(`Waiting for messages in ${queue}`);
-
-        channel.consume(queue, (msg) => {
-            console.log("Message received: " + msg.content.toString());
-            user = JSON.parse(msg.content.toString());
-            channel.ack(msg);
-
-            message = msg;
-        }, {
-            noAck: false
-        });
+        amqpChannel = channel;
+        console.log("Channel created");
     });
 });
+
+let readMessage = () => {
+    if (amqpChannel)
+    {
+        console.log("Looking for messages");
+        amqpChannel.get(queue, {noAck: false}, (err, msg) => {
+            if (err) console.log(err);
+
+            if (msg)
+            {
+                amqpChannel.ack(msg, false);
+                console.log("Message received: " + msg.content.toString());
+                transcode(JSON.parse(msg.content.toString()));
+            }
+            else
+            {
+                console.log("No message found");
+                return;
+            }
+        });
+    }
+}
+
+setTimeout(readMessage, 10000);
 
 function transcode(user)
 {
