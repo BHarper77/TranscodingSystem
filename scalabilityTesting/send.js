@@ -15,11 +15,11 @@ amqp.connect(cluster, (error0, connection) => {
             durable: true
         });
 
-        for (i = 0; i < 100; i++)
+        for (i = 1; i < 6; i++)
         {
-            let msg = "message" + i;
+            let msg = "message " + i;
             channel.sendToQueue(queue, Buffer.from(msg));
-            console.log("Message sent: message" + i);
+            console.log("Message sent: message " + i);
         }
     });
     setTimeout(() => {

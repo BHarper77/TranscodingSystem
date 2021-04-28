@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: scale-deployment
+  name: scale
   labels:
-    app: scale-deployment
+    app: scale
 spec:
   replicas: 1
   selector: 
     matchLabels:
-      app: scale-deployment
+      app: scale
   template:
     metadata:
       labels:
-        app: scale-deployment
+        app: scale
     spec:
       containers:
         - name: scale-deployment

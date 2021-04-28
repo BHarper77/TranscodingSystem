@@ -2,16 +2,20 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: scale-keda-deployment
+  labels:
+    app: scale
+    deploymentName: scale
 spec:
   scaleTargetRef:
-    name: scale-deployment
+    name: scale
+  pollingInterval: 5
   minReplicaCount: 0
-  maxReplicaCount: 100
-  cooldownPeriod: 20
+  maxReplicaCount: 10
+  cooldownPeriod: 60
   triggers:
   - type: rabbitmq
     metadata:
       host: amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861
       mode: QueueLength
-      value: "5"
+      value: '1'
       queueName: scaleTest
