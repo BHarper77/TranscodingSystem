@@ -14,3 +14,5 @@ function sleep(ms)
         setTimeout(resolve, ms);
     });
 }
+
+helloWorld();

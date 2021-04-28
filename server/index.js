@@ -2,12 +2,10 @@
 const express = require("express");
 const app = express();
 
-const corsLocal = "http://192.168.254.138:8080";
-const cors = "http://192.168.43.125:8080";
+const cors = "http://192.168.254.138";
 const httpServer = require("http").createServer(app);
-//FIXME: Using Nginx as proxy breaks CORS for SocketIO
 const io = require("socket.io")(httpServer, {
-    cors: { origin: corsLocal }
+    cors: { origin: cors }
 });
 
 const bodyParser = require("body-parser");
@@ -213,6 +211,10 @@ watcher.on("add", (path) => {
         return true;
     });
 });
+//#endregion
+
+//#region STATIC CONTENT
+app.use(express.static("../src/"));
 //#endregion
 
 const port = 3000;

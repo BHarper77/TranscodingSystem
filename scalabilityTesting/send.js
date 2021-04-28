@@ -12,7 +12,7 @@ amqp.connect(cluster, (error0, connection) => {
         const queue = "scaleTest";
 
         channel.assertQueue(queue, {
-            durable: false
+            durable: true
         });
 
         for (i = 0; i < 100; i++)
@@ -22,8 +22,8 @@ amqp.connect(cluster, (error0, connection) => {
             console.log("Message sent: message" + i);
         }
     });
-    /*setTimeout(() => {
+    setTimeout(() => {
         connection.close();
         process.exit(0);
-    }, 500);*/
+    }, 1000);
 });

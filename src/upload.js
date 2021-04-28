@@ -1,4 +1,3 @@
-const url = "http://localhost:3000";
 const server = "http://192.168.254.138:3000/";
 
 const socket = io(server, {

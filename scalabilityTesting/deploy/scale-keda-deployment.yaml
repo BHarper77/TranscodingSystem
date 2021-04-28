@@ -7,11 +7,11 @@ spec:
     name: scale-deployment
   minReplicaCount: 0
   maxReplicaCount: 100
-  cooldownPeriod: 1200
+  cooldownPeriod: 20
   triggers:
   - type: rabbitmq
     metadata:
       host: amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861
       mode: QueueLength
-      value: "1"
+      value: "5"
       queueName: scaleTest
