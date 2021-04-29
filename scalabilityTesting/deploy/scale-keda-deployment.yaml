@@ -9,13 +9,12 @@ spec:
   scaleTargetRef:
     name: scale
   pollingInterval: 5
-  minReplicaCount: 0
-  maxReplicaCount: 10
-  cooldownPeriod: 60
+  cooldownPeriod: 30
+  #minReplicaCount: 0
+  maxReplicaCount: 100
   triggers:
   - type: rabbitmq
     metadata:
       host: amqp://EmZn4ScuOPLEU1CGIsFKOaQSCQdjhzca:dJhLl2aVF78Gn07g2yGoRuwjXSc6tT11@192.168.49.2:30861
-      mode: QueueLength
-      value: '1'
       queueName: scaleTest
+      queueLength: '1'
