@@ -15,7 +15,7 @@ amqp.connect(cluster, (error0, connection) => {
             durable: true
         });
 
-        for (i = 0; i < 50; i++)
+        for (i = 0; i < 3; i++)
         {
             let msg = "message " + i;
             channel.sendToQueue(queue, Buffer.from(msg));
