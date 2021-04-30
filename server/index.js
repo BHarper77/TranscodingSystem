@@ -169,7 +169,7 @@ io.on("connection", (socket) => {
         userChoice: socket.userChoice 
     }
 
-    send(newUser);
+    //send(newUser);
     users.push(newUser);
 
     console.log("\nA user connected: " + socket.username);
@@ -200,7 +200,7 @@ watcher.on("add", (path) => {
     users.every((element) => {
         if (element.username === split[0])
         {
-            io.to(element.socketId).emit("fileReady", split[0]);
+            io.to(element.socketId).emit("fileReady", path);
             return false;
         }
         else //Can't find user

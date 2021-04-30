@@ -92,23 +92,32 @@ socket.on("connect", () => {
     console.log("Socket ID: " + socket.id);
 });
 
+socket.on("fileReady", (content) => {
+    const output = document.getElementById("output");
+    const downloadButton = document.getElementById("downloadButton");
+
+    output.style.visibility = "visible";
+
+    downloadButton.addEventListener("click", e => {
+        e.preventDefault();
+
+        //Get file from server and display in browser
+        fetch("/files/finished/" + content, {
+            mode: "no-cors",
+            method: "GET"
+        })
+        .then(response => response.blob())
+        .then(blob => URL.createObjectURL(blob))
+        .then(url => {
+            window.open(url, '_blank');
+        });
+    })    
+});
+
 socket.on("connect_error", (err) => {
     if(err.message === "invalid username")
     {
         this.usernameAlreadySelected = false;
     }
-});
-
-function socketMessage(userChoice)
-{
-    socket.emit("userChoice", userChoice);
-}
-
-socket.on("fileReady", (content) => {
-    const output = document.getElementById("output");
-    const download = document.getElementById("download");
-
-    output.style.visibility = "visible";
-    download.href = "192.168.254.138:3000/get-file/" + content;
 });
 //#endregion

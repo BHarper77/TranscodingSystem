@@ -22,21 +22,29 @@
                 <div class="gridItem">
                     <form id="uploadForm" method="POST" enctype="multipart/form-data">
                         <input type="file" id="inpFile" name="file" accept="video/*, .mkv"><br>
-                        <label>Format</label>
-                            <select id="format" name="format">
-                                <option value="mp4">MP4</option>
-                                <option value="matroska">MKV</option>
-                            </select><br>
-                        <label>Resolution</label>
-                            <select id="resolution" name="resolution">
-                                <option value="1920x1080">1080</option>
-                                <option value="1280x720">720</option>
-                            </select><br>
-                        <label>Encoder</label>
-                            <select id="encoder" name="encoder">
-                                <option value="libx264">H.264</option>
-                                <option value="libx265">H.265</option>
-                            </select><br>
+                        <table>
+                            <tr>
+                            <td><label>Format:</label></td>
+                                <td><select id="format" name="format">
+                                    <option value="mp4">MP4</option>
+                                    <option value="matroska">MKV</option>
+                                </select></td>
+                            </tr>
+                            <tr>
+                            <td><label>Resolution:</label></td>
+                                <td><select id="resolution" name="resolution">
+                                    <option value="1920x1080">1080</option>
+                                    <option value="1280x720">720</option>
+                                </select></td>
+                            </tr>
+                            <tr>
+                            <td><label>Encoder:</label></td>
+                                <td><select id="encoder" name="encoder">
+                                    <option value="libx264">H.264</option>
+                                    <option value="libx265">H.265</option>
+                                </select></td>
+                            </tr>
+                        </table>
                         <button type="submit">Upload File</button>
                     </form>
                 </div>
@@ -59,11 +67,12 @@
                 </div>
             
                 <div class="gridItem" id="output">
-                    <a id="download" href="" download="">Download</a>
+                    <button id="downloadButton"><a id="download" href="" download="">Download</a></button>
                 </div>
             </div>
         </main>
     </body>
 
     <script type="module" src="upload.js"></script>
+    <!--<script src="../node_modules/downloadjs/download.min.js"></script>-->
 </html>
