@@ -94,15 +94,17 @@ socket.on("connect", () => {
 
 socket.on("fileReady", (content) => {
     const output = document.getElementById("output");
-    const downloadButton = document.getElementById("downloadButton");
+    const downloadButton = document.getElementById("downloadButton")
+    //const download = document.getElementById("download");
 
     output.style.visibility = "visible";
+    //download.href = "192.168.254.138/files/finished/" + content;
+    //download.download = content;
 
     downloadButton.addEventListener("click", e => {
         e.preventDefault();
 
-        //Get file from server and display in browser
-        fetch("/files/finished/" + content, {
+        fetch("/get-file/" + content, {
             mode: "no-cors",
             method: "GET"
         })
@@ -111,7 +113,7 @@ socket.on("fileReady", (content) => {
         .then(url => {
             window.open(url, '_blank');
         });
-    })    
+    });
 });
 
 socket.on("connect_error", (err) => {
