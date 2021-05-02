@@ -120,9 +120,7 @@ app.get("/get-file/:filename", (req, res) => {
     users.every((element) => {
         if (element.username === split[0])
         {
-            //TODO: Look at using Nginx to handle file delivery
             res.sendFile(path.join(__dirname, "../files/finished/") + element.fullFileName);
-            //TODO: Delete file when client has downloaded it
             return false;
         }
         else //Can't find user to deliver file to 
@@ -169,7 +167,7 @@ io.on("connection", (socket) => {
         userChoice: socket.userChoice 
     }
 
-    //send(newUser);
+    send(newUser);
     users.push(newUser);
 
     console.log("\nA user connected: " + socket.username);
@@ -183,7 +181,6 @@ io.on("connection", (socket) => {
 //#endregion
 
 //#region FILEWATCHINGs
-//TODO: Delete files in files dir when same file is in finished dir
 var fileLocation = "../files/finished";
 
 var watcher = chokidar.watch(".", {

@@ -23,7 +23,6 @@ inpFile.onchange = () => {
 };
 
 uploadForm.addEventListener("submit", e => {
-    //TODO: Prevent user from pressing button multiple times 
     e.preventDefault();
 
     if(!isFileChosen)
